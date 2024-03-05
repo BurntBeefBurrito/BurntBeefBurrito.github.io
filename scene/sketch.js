@@ -10,6 +10,10 @@
 let winx;
 let winy;
 
+//images idfk
+let boom;
+let arrowImage;
+
 //variables relating to notes and lanes
 let lanes; // the number of lanes lol
 
@@ -26,7 +30,7 @@ let state; // is it in a menu, or playing?
 let offset; //how offset are the lanes and things?
 
 function preload(){
-  arrowimage = loadImage("Slingshotwoah.jpg");
+  arrowImage = loadImage("Slingshotwoah.jpg");
   boom = loadImage("Boomboxgg.jpg");
 }
 
@@ -51,7 +55,7 @@ function menu(){
 
 function playing(){
   for(let i = 0; i < lanes; i++){
-    image(arrowimage, winx/2-120 + 60 * i, winy - winy/5, 60, 60)
+    image(arrowImage, winx/2-120 + 60 * i, winy - winy/5, 60, 60)
   }
 }
 
