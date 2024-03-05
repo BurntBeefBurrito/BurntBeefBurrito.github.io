@@ -12,11 +12,11 @@ let winy;
 
 //images idfk
 let boom;
+let bumperImage;
 let arrowImage;
 
 //variables relating to notes and lanes
-let lanes; // the number of lanes lol
-
+let lanes; // the number of lanes lol, dont use more than 4 yet
 let accuracyMS; // how many ms do you have to hit the notes? bigger is easier
 
 //lists
@@ -29,9 +29,11 @@ let noteDistance; //how many ms are the notes from the keys
 let state; // is it in a menu, or playing?
 let offset; //how offset are the lanes and things?
 
+//picture heaven
 function preload(){
-  arrowImage = loadImage("Slingshotwoah.jpg");
-  boom = loadImage("Boomboxgg.jpg");
+  bumperImage = loadImage("images/Slingshotwoah.jpg");
+  boom = loadImage("images/Boomboxgg.jpg");
+  arrowImage = loadImage("images/SlingshotGoodJob.jpg");
 }
 
 function setup() {
@@ -40,13 +42,16 @@ function setup() {
   winx = windowWidth;
   winy = windowHeight;
   state = "play";
+  binds = [68, 70, 74, 75, 83, 76];
 }
 
 function draw() {
   background(220, 150, 220);
-  text(round(millis()/1000), 20, 20);
+  text(noteLane, 20, 20);
   
-  if (state === "play") {playing();}
+  if (state === "play") {
+    playing();
+  }
   
 }
 function menu(){
@@ -54,12 +59,28 @@ function menu(){
 }
 
 function playing(){
+  bumperMan();
+  arrowMan();
+}
+
+function bumperMan(){
+//this draws the bumpers
   for(let i = 0; i < lanes; i++){
-    image(arrowImage, winx/2-120 + 60 * i, winy - winy/5, 60, 60)
+    image(bumperImage, winx/2-120 + 240 / lanes * i, winy - winy/5, 60, 60);
+    if (keyIsDown(binds[i])){
+      image(arrowImage, winx/2-120 + 240 / lanes * i, winy - winy/5, 60, 60);
+    }
   }
 }
 
-function laneMan(){}
+function arrowMan(){
+  if (keyIsDown(32)){
+    noteDistance(append(0));
+    noteLane(append(0));
+  }
 
-//how it should work
-  // notes are in a list, 
+  for(let count = 0; count < length(noteDistance);){ //draws notes
+    image(boom, winx/2-120 + 240 / lanes * noteLane, winy - winy/5, 60, 60);
+  }
+
+}
