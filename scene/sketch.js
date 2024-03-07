@@ -23,6 +23,7 @@ let accuracyMS; // how many ms do you have to hit the notes? bigger is easier
 let binds; //keybindings the user presses
 let noteLane = []; //which lane are the notes in?
 let noteDistance = []; //how many ms are the notes from the keys
+let tempnote = [];
 
 
 //misc variables
@@ -47,7 +48,10 @@ function setup() {
 
 function draw() {
   background(220, 150, 220);
-  text(noteDistance, 20, 20);
+
+  //                                      THIS IS FOR ON SCREEN TEXT FEEL FREE TO CHANGE FOR TESTS
+  text(noteLane, 20, 20);
+  text(noteDistance, 20, 50);
   
   if (state === "play") {
     playing();
@@ -75,7 +79,7 @@ function bumperMan(){
 
 function arrowMan(){
   if (keyIsDown(32)){
-    append(noteDistance, round(random(0, winy)));
+    append(noteDistance, 0);
     append(noteLane, round(random(0, 3)));
   }
 
@@ -83,10 +87,22 @@ function arrowMan(){
     image(boom, winx/2-120 + 240 / lanes * noteLane[count], noteDistance[count], 60, 60);
   }
 
-  for(let count = 0; count < noteDistance.length; count++){ //draws notes
-    noteDistance[count]++;
+  for(let count = 0; count < noteDistance.length; count++){ //kills notes
+    
+    for(let idfk = 0; idfk < 4; idfk++){
+      noteDistance[count]++;
+    }
+
     if(noteDistance[count] >= winy - winy/5){
-      noteDistance[count] = "";
+      
+      tempnote = noteLane.slice(count, noteLane.length-1);
+      noteLane = noteLane.slice(0, count);
+      append(noteLane, tempnote);
+
+      tempnote = noteDistance.slice(count, noteDistance.length-1);
+      noteDistance = noteDistance.slice(0, count);
+      append(noteDistance, tempnote);
+
     }
   }
 
