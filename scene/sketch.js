@@ -23,7 +23,9 @@ let accuracyMS; // how many ms do you have to hit the notes? bigger is easier
 let binds; //keybindings the user presses
 let noteLane = []; //which lane are the notes in?
 let noteDistance = []; //how many ms are the notes from the keys
-let tempnote = [];
+let tempnotefirst = [];
+let tempnotelast = [];
+
 
 
 //misc variables
@@ -93,16 +95,26 @@ function arrowMan(){
       noteDistance[count]++;
     }
 
-    if(noteDistance[count] >= winy - winy/5){
+    if(noteDistance[count] >= winy* 0.8){
       
-      tempnote = noteLane.slice(count, noteLane.length-1);
-      noteLane = noteLane.slice(0, count);
-      append(noteLane, tempnote);
+      // tempnote = noteLane.slice(count, noteLane.length-1);
+      // noteLane = noteLane.slice(0, count);
+      // append(noteLane, tempnote);
 
-      tempnote = noteDistance.slice(count, noteDistance.length-1);
-      noteDistance = noteDistance.slice(0, count);
-      append(noteDistance, tempnote);
+      // tempnotefirst = noteDistance.slice(count, noteDistance.length-1);
+      // noteDistance = noteDistance.slice(0, count);
+      // append(noteDistance, tempnote);
 
+      // tempnotefirst = noteLane.slice(0, count);
+      // tempnotelast = noteLane(count + 1);
+      // noteLane = tempnotefirst.concat(tempnotelast);
+
+      // tempnotefirst = noteDistance.slice(0, count);
+      // tempnotelast = noteDistance(count + 1);
+      // noteDistance = tempnotefirst.concat(tempnotelast);
+
+      noteDistance.splice(count, 1);
+      noteLane.splice(count, 1);
     }
   }
 
