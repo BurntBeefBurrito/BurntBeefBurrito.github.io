@@ -1,10 +1,12 @@
 // Rhythm Hell
 // Michael Gorylev
-// Not interested in a relationship
-//
+// 3/11/24
+//       offset text
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// - I used arrays before they were introduced (today)
 
+//temporary sprites were taken from https://phighting.fandom.com/wiki/Stickers
+//use DFJK for the bumpers and space to summon notes
 
 //windowthings
 let winx;
@@ -17,16 +19,14 @@ let arrowImage;
 
 //variables relating to notes and lanes
 let lanes; // the number of lanes lol, dont use more than 4 yet
-let accuracyMS; // how many ms do you have to hit the notes? bigger is easier
+let accuracy; // how much distance do you have to hit the notes? bigger is easier
+let noteSpeed; //how fast the notes go zoom
 
 //lists
 let binds; //keybindings the user presses
+let bindnames; //the names for keybindings, may be handy
 let noteLane = []; //which lane are the notes in?
 let noteDistance = []; //how many ms are the notes from the keys
-let tempnotefirst = [];
-let tempnotelast = [];
-
-
 
 //misc variables
 let state; // is it in a menu, or playing?
@@ -46,6 +46,9 @@ function setup() {
   winy = windowHeight;
   state = "play";
   binds = [68, 70, 74, 75, 83, 76];
+  bindnames = ["KeyD", "KeyF", "KeyJ", "KeyK"];
+  accuracy = 60;
+  noteSpeed = 6;
 }
 
 function draw() {
@@ -55,16 +58,20 @@ function draw() {
   text(noteLane, 20, 20);
   text(noteDistance, 20, 50);
   
-  if (state === "play") {
+  if (state === "play"){
     playing();
+  }
+  if (state === "menu"){
+    menu();
   }
   
 }
-function menu(){
+
+function menu(){ //only here because a menu is required :skull:
   //TBD
 }
 
-function playing(){
+function playing(){ //this is the ceo of the thing being playable
   bumperMan();
   arrowMan();
 }
@@ -72,16 +79,43 @@ function playing(){
 function bumperMan(){
 //this draws the bumpers
   for(let i = 0; i < lanes; i++){
-    image(bumperImage, winx/2-120 + 240 / lanes * i, winy - winy/5, 60, 60);
+
+    image(bumperImage, winx/2-120 + 240 / lanes * i, winy*0.8, 60, 60);
+
     if (keyIsDown(binds[i])){
-      image(arrowImage, winx/2-120 + 240 / lanes * i, winy - winy/5, 60, 60);
+      image(arrowImage, winx/2-120 + 240 / lanes * i, winy*0.8, 60, 60);
+      //look for notes within accuracy of the bumpers to kill, while in the same lane
+      // for(let possibleNotes = 0; possibleNotes < noteDistance.length; possibleNotes++){
+
+      //   if (noteDistance[possibleNotes] >= winy*0.8 - accuracy && noteDistance[possibleNotes] <= winy*0.8 + accuracy && noteLane[possibleNotes] === i){
+      //     noteDistance.splice(possibleNotes, 1); //shorten prev line plz
+      //     noteLane.splice(possibleNotes, 1);
+      //  }
+      //}
     }
   }
 }
 
-function arrowMan(){
-  if (keyIsDown(32)){
-    append(noteDistance, 0);
+function keyPressed(){
+  for(let q = 0; q < lanes; q++){
+    if (keyCode === binds[q]){
+
+      for(let possibleNotes = 0; possibleNotes < noteDistance.length; possibleNotes++){
+
+        if (noteDistance[possibleNotes] >= winy*0.8 - accuracy && noteDistance[possibleNotes] 
+          <= winy*0.8 + accuracy && noteLane[possibleNotes] === q){
+
+          noteDistance.splice(possibleNotes, 1); //shorten prev line plz
+          noteLane.splice(possibleNotes, 1);
+        }
+      }
+    }
+  }
+}
+function arrowMan(){ //this is an all you can eat buffet for note management
+
+  if (keyIsDown(32)){ //this creates notes
+    append(noteDistance, round(winy*0.8 - 800));
     append(noteLane, round(random(0, 3)));
   }
 
@@ -89,17 +123,16 @@ function arrowMan(){
     image(boom, winx/2-120 + 240 / lanes * noteLane[count], noteDistance[count], 60, 60);
   }
 
-  for(let count = 0; count < noteDistance.length; count++){ //kills notes
+  for(let count = 0; count < noteDistance.length; count++){ //does stuff that affects all notes
     
-    for(let idfk = 0; idfk < 4; idfk++){ //this moves the notes
+    for(let idfk = 0; idfk < noteSpeed; idfk++){ //this moves the notes
       noteDistance[count]++;
     }
 
-    if(noteDistance[count] >= winy){
+    if(noteDistance[count] >= winy){ //kills notes
       //i overcomplicated this so much for myself and spent like an hour and a half trying to make this work
       noteDistance.splice(count, 1);
       noteLane.splice(count, 1);
     }
   }
-
 }
