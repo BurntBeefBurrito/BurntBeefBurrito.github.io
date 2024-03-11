@@ -91,28 +91,12 @@ function arrowMan(){
 
   for(let count = 0; count < noteDistance.length; count++){ //kills notes
     
-    for(let idfk = 0; idfk < 4; idfk++){
+    for(let idfk = 0; idfk < 4; idfk++){ //this moves the notes
       noteDistance[count]++;
     }
 
-    if(noteDistance[count] >= winy* 0.8){
-      
-      // tempnote = noteLane.slice(count, noteLane.length-1);
-      // noteLane = noteLane.slice(0, count);
-      // append(noteLane, tempnote);
-
-      // tempnotefirst = noteDistance.slice(count, noteDistance.length-1);
-      // noteDistance = noteDistance.slice(0, count);
-      // append(noteDistance, tempnote);
-
-      // tempnotefirst = noteLane.slice(0, count);
-      // tempnotelast = noteLane(count + 1);
-      // noteLane = tempnotefirst.concat(tempnotelast);
-
-      // tempnotefirst = noteDistance.slice(0, count);
-      // tempnotelast = noteDistance(count + 1);
-      // noteDistance = tempnotefirst.concat(tempnotelast);
-
+    if(noteDistance[count] >= winy){
+      //i overcomplicated this so much for myself and spent like an hour and a half trying to make this work
       noteDistance.splice(count, 1);
       noteLane.splice(count, 1);
     }
