@@ -1,9 +1,9 @@
-// Rhythm Hell
+// Rhythm Heaven't
 // Michael Gorylev
-// 3/11/24
+// 3/12/24
 //       offset text
 // Extra for Experts:
-// - I used arrays before they were introduced (today)
+// - I used arrays before they were introduced (3/11/24)
 
 //temporary sprites were taken from https://phighting.fandom.com/wiki/Stickers
 //use DFJK for the bumpers and space to summon notes
@@ -12,7 +12,7 @@
 let winx;
 let winy;
 
-//images idfk
+//images idk
 let boom;
 let bumperImage;
 let arrowImage;
@@ -20,7 +20,7 @@ let arrowImage;
 //variables relating to notes and lanes
 let lanes; // the number of lanes lol, dont use more than 4 yet
 let accuracy; // how much distance do you have to hit the notes? bigger is easier
-let noteSpeed; //how fast the notes go zoom
+let noteSpeed; //how fast the notes go zoom, measured in pixels per frame 
 
 //lists
 let binds; //keybindings the user presses
