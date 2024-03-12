@@ -55,7 +55,7 @@ function draw() {
   background(220, 150, 220);
 
   //                                      THIS IS FOR ON SCREEN TEXT FEEL FREE TO CHANGE FOR TESTS
-  text(noteLane, 20, 20);
+  text(winy*0.8, 20, 20);
   text(noteDistance, 20, 50);
   
   if (state === "play"){
