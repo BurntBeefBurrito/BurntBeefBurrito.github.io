@@ -20,7 +20,8 @@ let arrowImage;
 //variables relating to notes and lanes
 let lanes; // the number of lanes lol, dont use more than 4 yet
 let accuracy; // how much distance do you have to hit the notes? bigger is easier
-let noteSpeed; //how fast the notes go zoom, measured in pixels per frame 
+let noteSpeed; //how fast the notes go zoom, measured in pixels per frame
+let one; //this will make only one note get removed when a key is pressed
 
 //lists
 let binds; //keybindings the user presses
@@ -47,7 +48,7 @@ function setup() {
   state = "play";
   binds = [68, 70, 74, 75, 83, 76];
   bindnames = ["KeyD", "KeyF", "KeyJ", "KeyK"];
-  accuracy = 60;
+  accuracy = 200;
   noteSpeed = 6;
 }
 
@@ -84,19 +85,12 @@ function bumperMan(){
 
     if (keyIsDown(binds[i])){
       image(arrowImage, winx/2-120 + 240 / lanes * i, winy*0.8, 60, 60);
-      //look for notes within accuracy of the bumpers to kill, while in the same lane
-      // for(let possibleNotes = 0; possibleNotes < noteDistance.length; possibleNotes++){
-
-      //   if (noteDistance[possibleNotes] >= winy*0.8 - accuracy && noteDistance[possibleNotes] <= winy*0.8 + accuracy && noteLane[possibleNotes] === i){
-      //     noteDistance.splice(possibleNotes, 1); //shorten prev line plz
-      //     noteLane.splice(possibleNotes, 1);
-      //  }
-      //}
+      
     }
   }
 }
 
-function keyPressed(){
+function keyPressed(){ //this deletes notes around a bumper when its pressed
   for(let q = 0; q < lanes; q++){
     if (keyCode === binds[q]){
 
