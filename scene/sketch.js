@@ -31,7 +31,15 @@ let noteDistance = []; //how many ms are the notes from the keys
 
 //misc variables
 let state; // is it in a menu, or playing?
-let offset; //how offset are the lanes and things?
+
+//visual variables
+let offsetx; //how offset are the lanes and things? This will be used for silly mechanics when i get around to them
+let offsety; //i should turn these into lists or smth to make each lane independent and fun
+let spacing; //how spaced are the lanes?
+let rotation; //i legit have no idea how I'lll do this
+
+//                                                     USE OBJECT NOTATION
+//                                                     Maybe for mapping? setting notespeeds and kps'?
 
 //picture heaven
 function preload(){
@@ -50,6 +58,7 @@ function setup() {
   bindnames = ["KeyD", "KeyF", "KeyJ", "KeyK"];
   accuracy = 200;
   noteSpeed = 6;
+  offset = 0;
 }
 
 function draw() {
@@ -68,23 +77,24 @@ function draw() {
   
 }
 
-function menu(){ //only here because a menu is required :skull:
+function menu(){ //only here because a menu is required :skull: also i dont wanna make this bc it makes testing slower
   //TBD
 }
 
 function playing(){ //this is the ceo of the thing being playable
   bumperMan();
   arrowMan();
+  candyMan();
 }
 
 function bumperMan(){
 //this draws the bumpers
   for(let i = 0; i < lanes; i++){
 
-    image(bumperImage, winx/2-120 + 240 / lanes * i, winy*0.8, 60, 60);
+    image(bumperImage, winx/2-120 + 240 / lanes * i + offsetx, winy*0.8, 60, 60);
 
     if (keyIsDown(binds[i])){
-      image(arrowImage, winx/2-120 + 240 / lanes * i, winy*0.8, 60, 60);
+      image(arrowImage, winx/2-120 + 240 / lanes * i + offsetx, winy*0.8, 60, 60);
       
     }
   }
@@ -98,8 +108,7 @@ function keyPressed(){ //this deletes notes around a bumper when its pressed
 
         if (noteDistance[possibleNotes] >= winy*0.8 - accuracy && noteDistance[possibleNotes] 
           <= winy*0.8 + accuracy && noteLane[possibleNotes] === q){
-
-          noteDistance.splice(possibleNotes, 1); //shorten prev line plz
+          noteDistance.splice(possibleNotes, 1); //shorten prev line plz and make this more consistent since it sometimes misses notes
           noteLane.splice(possibleNotes, 1);
         }
       }
@@ -114,7 +123,7 @@ function arrowMan(){ //this is an all you can eat buffet for note management
   }
 
   for(let count = 0; count < noteDistance.length; count++){ //draws notes
-    image(boom, winx/2-120 + 240 / lanes * noteLane[count], noteDistance[count], 60, 60);
+    image(boom, winx/2-120 + 240 / lanes * noteLane[count] + offsetx, noteDistance[count], 60, 60);
   }
 
   for(let count = 0; count < noteDistance.length; count++){ //does stuff that affects all notes
@@ -129,4 +138,9 @@ function arrowMan(){ //this is an all you can eat buffet for note management
       noteLane.splice(count, 1);
     }
   }
+}
+
+function candyMan(){ //short for eyecandy manager, this is the function i will use to make everything visually distracting :)
+  //offsetx = mouseX - winx/2;
+
 }
