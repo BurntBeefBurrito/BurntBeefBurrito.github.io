@@ -58,7 +58,7 @@ function setup() {
   bindnames = ["KeyD", "KeyF", "KeyJ", "KeyK"];
   accuracy = 200;
   noteSpeed = 6;
-  offset = 0;
+  offsetx = 0;
 }
 
 function draw() {
@@ -87,8 +87,7 @@ function playing(){ //this is the ceo of the thing being playable
   candyMan();
 }
 
-function bumperMan(){
-//this draws the bumpers
+function bumperMan(){ //this draws the bumpers
   for(let i = 0; i < lanes; i++){
 
     image(bumperImage, winx/2-120 + 240 / lanes * i + offsetx, winy*0.8, 60, 60);
