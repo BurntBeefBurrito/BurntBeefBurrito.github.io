@@ -8,10 +8,6 @@
 //temporary sprites were taken from https://phighting.fandom.com/wiki/Stickers
 //use DFJK for the bumpers and space to summon notes
 
-//windowthings
-let winx;
-let winy;
-
 //images idk
 let boom;
 let bumperImage;
@@ -21,11 +17,9 @@ let arrowImage;
 let lanes; // the number of lanes lol, dont use more than 4 yet
 let accuracy; // how much distance do you have to hit the notes? bigger is easier
 let noteSpeed; //how fast the notes go zoom, measured in pixels per frame
-let one; //this will make only one note get removed when a key is pressed
 
 //lists
 let binds; //keybindings the user presses
-let bindnames; //the names for keybindings, may be handy
 let noteLane = []; //which lane are the notes in?
 let noteDistance = []; //how many ms are the notes from the keys
 
@@ -40,7 +34,6 @@ let rotation; //i legit have no idea how I'lll do this
 
 //                                                     USE OBJECT NOTATION
 //                                                     Maybe for mapping? setting notespeeds and kps'?
-
 //picture heaven
 function preload(){
   bumperImage = loadImage("images/Slingshotwoah.jpg");
@@ -49,23 +42,22 @@ function preload(){
 }
 
 function setup() {
+  angleMode(DEGREES);
   lanes = 4;
   createCanvas(windowWidth, windowHeight);
-  winx = windowWidth;
-  winy = windowHeight;
   state = "play";
   binds = [68, 70, 74, 75, 83, 76];
-  bindnames = ["KeyD", "KeyF", "KeyJ", "KeyK"];
   accuracy = 200;
   noteSpeed = 6;
   offsetx = 0;
+  spacing = 240; //use 240
+  imageMode(CENTER);
 }
 
 function draw() {
   background(220, 150, 220);
-
   //                                      THIS IS FOR ON SCREEN TEXT FEEL FREE TO CHANGE FOR TESTS
-  text(winy*0.8, 20, 20);
+  text(windowHeight*0.8, 20, 20);
   text(noteDistance, 20, 50);
   
   if (state === "play"){
@@ -73,8 +65,7 @@ function draw() {
   }
   if (state === "menu"){
     menu();
-  }
-  
+  } 
 }
 
 function menu(){ //only here because a menu is required :skull: also i dont wanna make this bc it makes testing slower
@@ -90,10 +81,10 @@ function playing(){ //this is the ceo of the thing being playable
 function bumperMan(){ //this draws the bumpers
   for(let i = 0; i < lanes; i++){
 
-    image(bumperImage, winx/2-120 + 240 / lanes * i + offsetx, winy*0.8, 60, 60);
+    image(bumperImage, windowWidth/2-spacing/2 + spacing / lanes * i + offsetx + spacing/2/lanes, windowHeight*0.8, 60, 60);
 
     if (keyIsDown(binds[i])){
-      image(arrowImage, winx/2-120 + 240 / lanes * i + offsetx, winy*0.8, 60, 60);
+      image(arrowImage, windowWidth/2-spacing/2 + spacing / lanes * i + offsetx + spacing/2/lanes, windowHeight*0.8, 60, 60);
       
     }
   }
@@ -105,8 +96,8 @@ function keyPressed(){ //this deletes notes around a bumper when its pressed
 
       for(let possibleNotes = 0; possibleNotes < noteDistance.length; possibleNotes++){
 
-        if (noteDistance[possibleNotes] >= winy*0.8 - accuracy && noteDistance[possibleNotes] 
-          <= winy*0.8 + accuracy && noteLane[possibleNotes] === q){
+        if (noteDistance[possibleNotes] >= windowHeight*0.8 - accuracy && noteDistance[possibleNotes] 
+          <= windowHeight*0.8 + accuracy && noteLane[possibleNotes] === q){
           noteDistance.splice(possibleNotes, 1); //shorten prev line plz and make this more consistent since it sometimes misses notes
           noteLane.splice(possibleNotes, 1);
         }
@@ -117,12 +108,12 @@ function keyPressed(){ //this deletes notes around a bumper when its pressed
 function arrowMan(){ //this is an all you can eat buffet for note management
 
   if (keyIsDown(32)){ //this creates notes
-    append(noteDistance, round(winy*0.8 - 800));
-    append(noteLane, round(random(0, 3)));
+    append(noteDistance, round(windowHeight*0.8 - 800));
+    append(noteLane, round(random(0, lanes-1)));
   }
 
   for(let count = 0; count < noteDistance.length; count++){ //draws notes
-    image(boom, winx/2-120 + 240 / lanes * noteLane[count] + offsetx, noteDistance[count], 60, 60);
+    image(boom, windowWidth/2-spacing/2 + spacing / lanes * noteLane[count] + offsetx + spacing/2/lanes, noteDistance[count], 60, 60);
   }
 
   for(let count = 0; count < noteDistance.length; count++){ //does stuff that affects all notes
@@ -131,7 +122,7 @@ function arrowMan(){ //this is an all you can eat buffet for note management
       noteDistance[count]++;
     }
 
-    if(noteDistance[count] >= winy){ //kills notes
+    if(noteDistance[count] >= windowHeight){ //kills notes
       //i overcomplicated this so much for myself and spent like an hour and a half trying to make this work
       noteDistance.splice(count, 1);
       noteLane.splice(count, 1);
@@ -140,6 +131,13 @@ function arrowMan(){ //this is an all you can eat buffet for note management
 }
 
 function candyMan(){ //short for eyecandy manager, this is the function i will use to make everything visually distracting :)
-  //offsetx = mouseX - winx/2;
+  spacing = mouseX - windowWidth/2;
+  line(windowWidth/2, 0, windowWidth/2, windowHeight);
 
+
+  // translate(100,100);
+  // rotate(mouseX);
+  // square(0, 0, 100);
+  // pop();
+  //rotating rotates the grid, not an individual object
 }
