@@ -17,23 +17,24 @@ let arrowImage;
 let lanes; // the number of lanes lol, dont use more than 4 yet
 let accuracy; // how much distance do you have to hit the notes? bigger is easier
 let noteSpeed; //how fast the notes go zoom, measured in pixels per frame
-
-//lists
-let binds; //keybindings the user presses
+let tempNote; //this is to make coding new notes easier ig
 let noteLane = []; //which lane are the notes in?
 let noteDistance = []; //how many ms are the notes from the keys
+let noteTraits = []; //the updated lane and distance array
 
 //misc variables
 let state; // is it in a menu, or playing?
+let binds; //keybindings the user presses
 
 //visual variables
 let offsetx; //how offset are the lanes and things? This will be used for silly mechanics when i get around to them
 let offsety; //i should turn these into lists or smth to make each lane independent and fun
 let spacing; //how spaced are the lanes?
-let rotation; //i legit have no idea how I'lll do this
+let rotation; //i legit have no idea how I'll do this
 
 //                                                     USE OBJECT NOTATION
 //                                                     Maybe for mapping? setting notespeeds and kps'?
+//                                                     use for notetraits (dist, lane)
 //picture heaven
 function preload(){
   bumperImage = loadImage("images/Slingshotwoah.jpg");
@@ -52,12 +53,20 @@ function setup() {
   offsetx = 0;
   spacing = 240; //use 240
   imageMode(CENTER);
+
+  let tempNote = {
+    speed: noteSpeed,
+    lane: round(random(0, lanes-1)),
+    distance: round(windowHeight*0.8 - 800),
+
+  };
+  noteTraits.push(tempNote);
 }
 
 function draw() {
   background(220, 150, 220);
   //                                      THIS IS FOR ON SCREEN TEXT FEEL FREE TO CHANGE FOR TESTS
-  text(windowHeight*0.8, 20, 20);
+  text(noteTraits[noteTraits.length-1].lane, 20, 20);
   text(noteDistance, 20, 50);
   
   if (state === "play"){
@@ -107,31 +116,43 @@ function keyPressed(){ //this deletes notes around a bumper when its pressed
 }
 function arrowMan(){ //this is an all you can eat buffet for note management
 
-  if (keyIsDown(32)){ //this creates notes
-    append(noteDistance, round(windowHeight*0.8 - 800));
-    append(noteLane, round(random(0, lanes-1)));
+  // if (keyIsDown(32)){ //this creates notes OLDDDD
+  //   append(noteDistance, round(windowHeight*0.8 - 800));
+  //   append(noteLane, ));
+  // }
+
+  spawnNote();
+
+  for(let note of noteTraits){ //draws notes
+    image(boom, windowWidth/2-spacing/2 + spacing / lanes * note.lane + offsetx + spacing/2/lanes, note.distance, 60, 60);
   }
 
-  for(let count = 0; count < noteDistance.length; count++){ //draws notes
-    image(boom, windowWidth/2-spacing/2 + spacing / lanes * noteLane[count] + offsetx + spacing/2/lanes, noteDistance[count], 60, 60);
-  }
+  for(let note of noteTraits){ //does stuff that affects all notes
 
-  for(let count = 0; count < noteDistance.length; count++){ //does stuff that affects all notes
+  
     
     for(let idfk = 0; idfk < noteSpeed; idfk++){ //this moves the notes
       noteDistance[count]++;
     }
 
-    if(noteDistance[count] >= windowHeight){ //kills notes
-      //i overcomplicated this so much for myself and spent like an hour and a half trying to make this work
-      noteDistance.splice(count, 1);
-      noteLane.splice(count, 1);
+    if(note.distance >= windowHeight){ //kills notes keep an eye on this
+      noteTraits.splice[note-1, 1];
     }
   }
 }
 
+function spawnNote() {
+  let tempNote = {
+    speed: noteSpeed,
+    lane: round(random(0, lanes-1)),
+    distance: round(windowHeight*0.8 - 800),
+
+  };
+  noteTraits.push(tempNote);
+}
+
 function candyMan(){ //short for eyecandy manager, this is the function i will use to make everything visually distracting :)
-  spacing = mouseX - windowWidth/2;
+  //spacing = mouseX - windowWidth/2;
   line(windowWidth/2, 0, windowWidth/2, windowHeight);
 
 
