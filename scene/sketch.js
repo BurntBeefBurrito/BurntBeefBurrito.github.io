@@ -6,7 +6,7 @@
 // - I used arrays before they were introduced (3/11/24)
 
 //temporary sprites were taken from https://phighting.fandom.com/wiki/Stickers
-//use DFJK for the bumpers and space to summon notes
+//use DFJK for the bumpers you dont manually spawn notes anymore :)
 
 //images idk
 let boom;
@@ -18,14 +18,11 @@ let lanes; // the number of lanes lol, dont use more than 4 yet
 let accuracy; // how much distance do you have to hit the notes? bigger is easier
 let noteSpeed; //how fast the notes go zoom, measured in pixels per frame
 let tempNote; //this is to make coding new notes easier ig
-let noteLane = []; //which lane are the notes in?
-let noteDistance = []; //how many ms are the notes from the keys
 let noteTraits = []; //the updated lane and distance array
 
 //misc variables
 let state; // is it in a menu, or playing?
 let binds; //keybindings the user presses
-let frameser; //frames was taken, this just counts frames                                          DO THISS GRAAAAHH
 
 //visual variables
 let offsetx; //how offset are the lanes and things? This will be used for silly mechanics when i get around to them
@@ -33,9 +30,11 @@ let offsety; //i should turn these into lists or smth to make each lane independ
 let spacing; //how spaced are the lanes?
 let rotation; //i legit have no idea how I'll do this
 
-//                                                     USE OBJECT NOTATION
-//                                                     Maybe for mapping? setting notespeeds and kps'?
+//                                                     THINGS TO DO
+//                                                     make a separate project for cool backgrounds then merge it into this
 //                                                     used for notetraits (speed, distance, lane)
+//                                                     bring back candyman some time (for making stuff look nice)
+//                                                     how do i use multiple .js files together? or at least hide functions when i dont need to look in them
 //picture heaven
 function preload(){
   bumperImage = loadImage("images/Slingshotwoah.jpg");
@@ -45,7 +44,7 @@ function preload(){
 
 function setup() {
   angleMode(DEGREES);
-  lanes = 6;
+  lanes = 4;
   createCanvas(windowWidth, windowHeight);
   state = "menu";
   binds = [68, 70, 74, 75, 83, 76];
@@ -66,8 +65,6 @@ function setup() {
 
 function draw() {
   background(220, 150, 220);
-  
-  
   if (state === "play"){
     playing();
   }
@@ -80,19 +77,17 @@ function menu(){ //only here because a menu is required :skull: also i dont wann
   text("This is a very high budget menu. hit left click to play the thing", windowWidth/2 - 150, windowHeight/2);
   if (mouseIsPressed){
     state = "play";
-
   }
 }
 
 function playing(){ //this is the ceo of the thing being playable
   bumperMan();
   arrowMan();
-  candyMan();
   spawnNote();
 
   //                                      THIS IS FOR ON SCREEN TEXT FEEL FREE TO CHANGE FOR TESTS
   text(noteTraits.length, 20, 20);
-  text(noteDistance, 20, 50);
+
 }
 
 function bumperMan(){ //this draws the bumpers
@@ -124,15 +119,12 @@ function keyPressed(){ //this deletes notes around a bumper when its pressed
 }
 function arrowMan(){ //this is an all you can eat buffet for note management
 
-  for(let note of noteTraits){ //draws notes
-    image(boom, windowWidth/2-spacing/2 + spacing / lanes * note.lane + offsetx + spacing/2/lanes, note.distance, 60, 60);
-  }
-
-  for(let note of noteTraits){ //does stuff that affects all notes
+  for(let note of noteTraits){ 
+    image(boom, windowWidth/2-spacing/2 + spacing / lanes * note.lane + offsetx + spacing/2/lanes, note.distance, 60, 60); //draws notes
     note.distance += note.speed; //moves notes
   }
 
-  for (let i = 0; i < noteTraits.length; i++){//kills notes keep an eye on this
+  for (let i = 0; i < noteTraits.length; i++){//kills notes
     if(noteTraits[i].distance >= windowHeight){ 
       noteTraits.splice(i, 1);
     }
@@ -148,9 +140,4 @@ function spawnNote() {
   };
   noteTraits.push(tempNote);
 }
-
-function candyMan(){ //short for eyecandy manager, this is the function i will use to make everything visually distracting
-
-}
-
-//im also gonna have to make a separate draw function for notes and stuff so that I can rotate them and stuff
+//candyMan used to be here
