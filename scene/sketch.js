@@ -26,15 +26,12 @@ let binds; //keybindings the user presses
 
 //visual variables
 let offsetx; //how offset are the lanes and things? This will be used for silly mechanics when i get around to them
-let offsety; //i should turn these into lists or smth to make each lane independent and fun
 let spacing; //how spaced are the lanes?
-let rotation; //i legit have no idea how I'll do this
 
-//                                                     THINGS TO DO
-//                                                     make a separate project for cool backgrounds then merge it into this
-//                                                     used for notetraits (speed, distance, lane)
-//                                                     bring back candyman some time (for making stuff look nice)
-//                                                     how do i use multiple .js files together? or at least hide functions when i dont need to look in them
+//                              THINGS TO DO
+//                              make a separate project for cool backgrounds then merge it into this
+//                              bring back candyman some time (for making stuff look nice)
+//                              how do i use multiple .js files together? or at least hide functions when i dont need to look in them
 //picture heaven
 function preload(){
   bumperImage = loadImage("images/Slingshotwoah.jpg");
@@ -102,7 +99,7 @@ function bumperMan(){ //this draws the bumpers
   }
 }
 
-function keyPressed(){ //this deletes notes around a bumper when its pressed
+function keyPressed(){ //this deletes notes around a bumper when its pressed, only one at a time now
   for(let q = 0; q < lanes; q++){
     if (keyCode === binds[q]){
 
@@ -140,4 +137,3 @@ function spawnNote() {
   };
   noteTraits.push(tempNote);
 }
-//candyMan used to be here
