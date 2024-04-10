@@ -30,8 +30,9 @@ let spacing; //how spaced are the lanes?
 
 //                              THINGS TO DO
 //                              make a separate project for cool backgrounds then merge it into this
-//                              bring back candyman some time (for making stuff look nice)
+//                              use grid array thingos
 //                              how do i use multiple .js files together? or at least hide functions when i dont need to look in them
+//                              math.floor(number) exists to round down (useful)
 //picture heaven
 function preload(){
   bumperImage = loadImage("images/Slingshotwoah.jpg");
@@ -114,8 +115,8 @@ function keyPressed(){ //this deletes notes around a bumper when its pressed, on
     }
   }
 }
-function arrowMan(){ //this is an all you can eat buffet for note management
 
+function arrowMan(){ //this is an all you can eat buffet for note management
   for(let note of noteTraits){ 
     image(boom, windowWidth/2-spacing/2 + spacing / lanes * note.lane + offsetx + spacing/2/lanes, note.distance, 60, 60); //draws notes
     note.distance += note.speed; //moves notes
