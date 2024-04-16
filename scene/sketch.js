@@ -30,7 +30,7 @@ let spacing; //how spaced are the lanes?
 
 //                              THINGS TO DO
 //                              make a separate project for cool backgrounds then merge it into this
-//                              use grid array thingos
+//                              I need to make a grid game of some kind
 //                              how do i use multiple .js files together? or at least hide functions when i dont need to look in them
 //                              math.floor(number) exists to round down (useful)
 //picture heaven
