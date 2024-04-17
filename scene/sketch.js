@@ -33,6 +33,7 @@ let spacing; //how spaced are the lanes?
 //                              I need to make a grid game of some kind
 //                              how do i use multiple .js files together? or at least hide functions when i dont need to look in them
 //                              math.floor(number) exists to round down (useful)
+//                              if you wanna load a JSON file, do it almost like an image, eg file = loadJSON("file.json");
 //picture heaven
 function preload(){
   bumperImage = loadImage("images/Slingshotwoah.jpg");

@@ -1,6 +1,8 @@
-// Conways game of life at home
-// Michael
-// Partly stolen
+// 2D Grid
+// Dan Schellenberg
+// Apr 9, 2024
+
+// if you are hard-coding a level, I'd use something like this
 
 // let grid = [[1, 0, 0, 1],
 //             [0, 1, 0, 1],
@@ -12,66 +14,152 @@
 //             [0, 0, 0, 1]];
 
 let grid;
-let nextTurn;
 let cellSize;
-let mode = 1;
-const GRID_SIZE = 10;
+const GRID_SIZE = 40;
+let toggleStyle = "self";
+let isAutoPlayOn = false;
+let gosperGun;
+
+function preload() {
+  gosperGun = loadJSON("gosper.json");
+}
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  //make the canvas the largest square that you can...
+  if (windowWidth < windowHeight) {
+    createCanvas(windowWidth, windowWidth);
+  }
+  else {
+    createCanvas(windowHeight, windowHeight);
+  }
 
   //if randomizing the grid, do this:
   grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
   
-  noStroke();
-  
+  //this is dumb -- should check if this is the right size!
+  cellSize = height/grid.length;
 }
+
+function windowResized() {
+  //make the canvas the largest square that you can...
+  if (windowWidth < windowHeight) {
+    resizeCanvas(windowWidth, windowWidth);
+  }
+  else {
+    resizeCanvas(windowHeight, windowHeight);
+  }
+
+  cellSize = height/grid.length;
+}
+
 function draw() {
-  createCanvas(windowWidth, windowHeight);
-  if(windowHeight < windowWidth){
-    cellSize = height/grid.length;
-  }
-  else{
-    cellSize = width/grid.length;
-  }
-
   background(220);
-  displayGrid();
 
+  if (isAutoPlayOn) {
+    grid = updateGrid();
+  }
+
+  displayGrid();
 }
 
 function keyPressed() {
   if (key === "r") {
     grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
   }
+
   if (key === "e") {
     grid = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
   }
-  if (key === "t") {
-    mode = 0 - mode;
+
+  if (key === "g") {
+    grid = gosperGun.gun;
   }
-  if (key === " "){
-    updateGrid();
+
+  if (key === "n") {
+    toggleStyle = "neighbours";
+  }
+
+  if (key === "s") {
+    toggleStyle = "self";
+  }
+
+  if (key === " ") {
+    grid = updateGrid();
+  }
+
+  if (key === "a") {
+    isAutoPlayOn = !isAutoPlayOn;
   }
 }
+
+function updateGrid() {
+  //need a second array, so I don't mess with the grid while counting neighbours
+  let nextTurn = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
+
+  //look at every cell
+  for (let y = 0; y < GRID_SIZE; y++) {
+    for (let x = 0; x < GRID_SIZE; x++) {
+      let neighbours = 0;
+
+      //look at every cell in a 3x3 grid around the cell
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          //avoid going off the edge of the grid
+          if (x+j >= 0 && x+j < GRID_SIZE && y+i >= 0 && y+i < GRID_SIZE) {
+            neighbours += grid[y + i][x + j];
+          }
+        }
+      }
+
+      //don't count yourself in the neighbours
+      neighbours -= grid[y][x];
+
+
+      //apply the rules
+      if (grid[y][x] === 1) { //currently alive
+        if (neighbours === 2 || neighbours === 3) {
+          nextTurn[y][x] = 1;
+        }
+        else {
+          nextTurn[y][x] = 0;
+        }
+      }
+
+      if (grid[y][x] === 0) { //currently dead
+        if (neighbours === 3) {
+          nextTurn[y][x] = 1;
+        }
+        else {
+          nextTurn[y][x] = 0;
+        }
+      }
+    }
+  }
+  return nextTurn;
+}
+
 
 function mousePressed() {
   let x = Math.floor(mouseX/cellSize);
   let y = Math.floor(mouseY/cellSize);
 
+  //toggle self
   toggleCell(x, y);
-  if(mode === 1){
+
+  // and NESW neighbours, if style is set to neighbours
+  if (toggleStyle === "neighbours") {
     toggleCell(x + 1, y);
     toggleCell(x - 1, y);
     toggleCell(x, y + 1);
     toggleCell(x, y - 1);
   }
-
 }
 
 function toggleCell(x, y) {
-  //toggle the color of the cell
-  if (x < GRID_SIZE && y < GRID_SIZE && x >=0 && y >= 0) {
+  // make sure the cell you're toggling is in the grid...
+  if (x < GRID_SIZE && y < GRID_SIZE &&
+      x >= 0 && y >= 0) {
+    //toggle the color of the cell
     if (grid[y][x] === 0) {
       grid[y][x] = 1;
     }
@@ -121,36 +209,4 @@ function generateEmptyGrid(cols, rows) {
     }
   }
   return emptyArray;
-}
-
-function updateGrid() {
-  nextTurn = generateEmptyGrid(GRID_SIZE, GRID_SIZE);
-  for(let y = 0; y < GRID_SIZE; y++){
-    for(let x = 0; x < GRID_SIZE; x++){
-      ruleCheck(x, y);
-    }
-  }
-}
-
-function ruleCheck(x, y) {
-  let neighbors = 0;
-  for(let a = -1; a < 1; a++){ //1 or 2?
-    for(let b = -1; b < 1; b++){
-      if(x+a >= 0 && x+a <GRID_SIZE && y+b >= 0 && y+b <GRID_SIZE){
-        neighbors += grid[y+a][x+b];
-      }
-    }
-  }
-  neighbors -= grid[y][x];
-
-  if(grid[y][x] === 1){
-    if(neighbors === 2 || neighbors === 3){
-      nextTurn[y][x] = 1;
-    }
-  }
-  else {
-    if(neighbors === 3){
-      nextTurn[y][x] = 1;
-    }
-  }
 }
