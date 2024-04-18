@@ -13,20 +13,23 @@ const IMPASSIBLE = 1;
 let music;
 let woah;
 let gg;
-let goodjob;                                //todo: make it only render a chunk, grow trees, make basic gen, textures, physics, implement walls?
+let goodjob;  
+let tile;
+let wall;
+let charactermodel;                              //todo: make it only render a chunk, grow trees, make basic gen, textures, physics, implement walls?
 let state = "menu";
 let boing;
 let player = {
-  x:3,
-  y: 3,
+  x:4,
+  y: 4,
 };
 
 function preload(){
-  woah = loadImage("images/Slingshotwoah.jpg");
-  gg = loadImage("images/Boomboxgg.jpg");
   goodjob = loadImage("images/SlingshotGoodJob.jpg");
   music = loadSound("audio/caketown.mp3");
   boing = loadSound("audio/boing.flac");
+  tile = loadImage("images/floor.png");
+  wall = loadImage("images/wall.png");
 }
 
 function setup() {
@@ -44,10 +47,10 @@ function setup() {
 function draw() {
   createCanvas(windowWidth, windowHeight);
   if(windowHeight < windowWidth){
-    cellSize = height/grid.length;
+    cellSize = height/VISIBLE_GRID_SIZE;
   }
   else{
-    cellSize = width/grid.length;
+    cellSize = width/VISIBLE_GRID_SIZE;
   }
 
   if (state === "menu"){
@@ -55,7 +58,8 @@ function draw() {
   }
   else{
     background(220);
-    displayGrid();
+    
+    displayVisGrid();
   }
 
 
@@ -121,23 +125,6 @@ function toggleCell(x, y) {
   }
 }
 
-function displayGrid() {
-  for (let y = 0; y < grid.length; y++) {
-    for (let x = 0; x < grid[y].length; x++) {
-      if (grid[y][x] === IMPASSIBLE) {
-        image(gg, x * cellSize, y * cellSize, cellSize, cellSize);
-      }
-      else if (grid[y][x] === OPEN_TILE){
-        image(woah, x * cellSize, y * cellSize, cellSize, cellSize);
-      }
-      else if (grid[y][x] === PLAYER){
-        image(goodjob, x * cellSize, y * cellSize, cellSize, cellSize);
-      }
-      //square(x * cellSize, y * cellSize, cellSize);
-    }
-  }
-}
-
 function generateRandomGrid(cols, rows) {
   let emptyArray = [];
   for (let y = 0; y < rows; y++) {
@@ -152,6 +139,7 @@ function generateRandomGrid(cols, rows) {
       }
     }
   }
+  emptyArray[player.y][player.x] = PLAYER;
   return emptyArray;
 }
 
@@ -163,6 +151,7 @@ function generateEmptyGrid(cols, rows) {
       emptyArray[y].push(0);
     }
   }
+  emptyArray[player.y][player.x] = PLAYER;
   return emptyArray;
 }
 
@@ -183,20 +172,35 @@ function movePlayer(x, y){
   }
 }
 
-function createVisGrid(){
+function displayVisGrid(){
   for (let y = 0; y < VISIBLE_GRID_SIZE; y++){
     for (let x = 0; x < VISIBLE_GRID_SIZE; x++){
-      console.log("yeah");
-      if (grid[y+player.y][x+player.x] === IMPASSIBLE) {
-        image(gg, x * cellSize, y * cellSize, cellSize, cellSize);
+      let offsetx = 0;
+      let offsety = 0;
+      if (player.x < 2){
+        offsetx = 2-player.x;
       }
-      else if (grid[y+player.y][x+player.x] === OPEN_TILE){
-        image(woah, x * cellSize, y * cellSize, cellSize, cellSize);
+      if (player.y < 2){
+        offsety = 2-player.y;
       }
-      else if (grid[y+player.y][x+player.x] === PLAYER){
+      if (player.y >= GRID_SIZE -2){
+        offsety = GRID_SIZE-player.y-3;
+      }
+      if (player.x >= GRID_SIZE -2){
+        offsetx = GRID_SIZE-player.x-3;
+      }
+
+
+
+      if (grid[y+player.y-2+offsety][x+player.x-2+offsetx] === IMPASSIBLE) {
+        image(wall, x * cellSize, y * cellSize, cellSize, cellSize);
+      }
+      else if (grid[y+player.y-2+offsety][x+player.x-2+offsetx] === OPEN_TILE){
+        image(tile, x * cellSize, y * cellSize, cellSize, cellSize);
+      }
+      else if (grid[y+player.y-2+offsety][x+player.x-2+offsetx] === PLAYER){
         image(goodjob, x * cellSize, y * cellSize, cellSize, cellSize);
       }
-      //square(x * cellSize, y * cellSize, cellSize);
     }
   }
 }
