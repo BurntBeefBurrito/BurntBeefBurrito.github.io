@@ -1,12 +1,15 @@
-// Copy of a demo
+// 2d block game thing
 // Michael
-// Completely stolen
+// partly stolen
 
 let grid;
 let cellSize;
 let mode = 1;
-const GRID_SIZE = 10;
-const VISIBLE_GRID_SIZE = 5; // i should turn this into a rectangle
+const GRID_SIZE = 12;
+const VISIBLE_GRID_SIZE = { //add a cure for miracle numbers
+  w: 7,
+  h: 5,
+};
 const PLAYER = 9;
 const OPEN_TILE = 0;
 const IMPASSIBLE = 1;
@@ -16,15 +19,15 @@ let gg;
 let goodjob;  
 let tile;
 let wall;
-let charactermodel;                              //todo: make it only render a chunk, grow trees, make basic gen, textures, physics, implement walls?
+let charactermodel;         //todo: improve clicking, make basic gen, grow trees, get better placeholders, physics, implement walls? also get some decent sleep
 let state = "menu";
 let boing;
 let player = {
-  x:4,
-  y: 4,
+  x: 2,
+  y: 2,
 };
 
-function preload(){
+function preload(){ //man I SURE WONDER WHAT THE PRELOAD FUNCTION DOES
   goodjob = loadImage("images/SlingshotGoodJob.jpg");
   music = loadSound("audio/caketown.mp3");
   boing = loadSound("audio/boing.flac");
@@ -47,17 +50,17 @@ function setup() {
 function draw() {
   createCanvas(windowWidth, windowHeight);
   if(windowHeight < windowWidth){
-    cellSize = height/VISIBLE_GRID_SIZE;
+    cellSize = height/VISIBLE_GRID_SIZE.h;
   }
   else{
-    cellSize = width/VISIBLE_GRID_SIZE;
+    cellSize = width/VISIBLE_GRID_SIZE.h;
   }
 
   if (state === "menu"){
     background("black");
   }
   else{
-    background(220);
+    background(0);
     
     displayVisGrid();
   }
@@ -66,7 +69,7 @@ function draw() {
 
 }
 
-function keyPressed() {
+function keyPressed() { //causes various things to happen when keys are pressed
   if (key === "r") {
     grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
   }
@@ -94,15 +97,10 @@ function keyPressed() {
   }
 }
 
-function mousePressed() {
+function mousePressed() { //transforms tiles when clicked on, please improve
   let x = Math.floor(mouseX/cellSize);
   let y = Math.floor(mouseY/cellSize);
 
-  // console.log(x, y);
-
-  //fix this so we check if we fell off the top or left sides...
-
-  //don't fall off the edge of the grid...
   toggleCell(x, y);
   if(mode === 1){
     toggleCell(x + 1, y);
@@ -114,7 +112,7 @@ function mousePressed() {
 }
 
 function toggleCell(x, y) {
-  //toggle the color of the cell
+  //toggle the cells type
   if (x < GRID_SIZE && y < GRID_SIZE && x >=0 && y >= 0) {
     if (grid[y][x] === OPEN_TILE) {
       grid[y][x] = IMPASSIBLE;
@@ -125,7 +123,7 @@ function toggleCell(x, y) {
   }
 }
 
-function generateRandomGrid(cols, rows) {
+function generateRandomGrid(cols, rows) { //random world gen
   let emptyArray = [];
   for (let y = 0; y < rows; y++) {
     emptyArray.push([]);
@@ -143,7 +141,7 @@ function generateRandomGrid(cols, rows) {
   return emptyArray;
 }
 
-function generateEmptyGrid(cols, rows) {
+function generateEmptyGrid(cols, rows) { //make an empty grid, handy for testing screensizes
   let emptyArray = [];
   for (let y = 0; y < rows; y++) {
     emptyArray.push([]);
@@ -155,9 +153,9 @@ function generateEmptyGrid(cols, rows) {
   return emptyArray;
 }
 
-function movePlayer(x, y){
-  if (x < GRID_SIZE && y < GRID_SIZE && x >=0 && y >= 0 && grid[y][x] === OPEN_TILE) { //this keeps it on the grid
-
+function movePlayer(x, y){ //moves the player
+  if (x < GRID_SIZE && y < GRID_SIZE && x >=0 && y >= 0 && grid[y][x] !== IMPASSIBLE) { //this keeps it on the grid
+    let onTile; //remembers what tile the player is standing on
     let oldX = player.x;
     let oldY = player.y;
 
@@ -172,13 +170,13 @@ function movePlayer(x, y){
   }
 }
 
-function displayVisGrid(){
-  for (let y = 0; y < VISIBLE_GRID_SIZE; y++){
-    for (let x = 0; x < VISIBLE_GRID_SIZE; x++){
+function displayVisGrid(){ //paints pretty pictures
+  for (let y = 0; y < VISIBLE_GRID_SIZE.h; y++){
+    for (let x = 0; x < VISIBLE_GRID_SIZE.w; x++){
       let offsetx = 0;
       let offsety = 0;
-      if (player.x < 2){
-        offsetx = 2-player.x;
+      if (player.x < 3){
+        offsetx = 3-player.x;  //gonna need to do something about the miracle numbers
       }
       if (player.y < 2){
         offsety = 2-player.y;
@@ -186,21 +184,19 @@ function displayVisGrid(){
       if (player.y >= GRID_SIZE -2){
         offsety = GRID_SIZE-player.y-3;
       }
-      if (player.x >= GRID_SIZE -2){
-        offsetx = GRID_SIZE-player.x-3;
+      if (player.x >= GRID_SIZE -3){
+        offsetx = GRID_SIZE-player.x-4;
       }
 
-
-
-      if (grid[y+player.y-2+offsety][x+player.x-2+offsetx] === IMPASSIBLE) {
+      if (grid[y+player.y-2+offsety][x+player.x-3+offsetx] === IMPASSIBLE) {
         image(wall, x * cellSize, y * cellSize, cellSize, cellSize);
       }
-      else if (grid[y+player.y-2+offsety][x+player.x-2+offsetx] === OPEN_TILE){
+      else if (grid[y+player.y-2+offsety][x+player.x-3+offsetx] === OPEN_TILE){
         image(tile, x * cellSize, y * cellSize, cellSize, cellSize);
       }
-      else if (grid[y+player.y-2+offsety][x+player.x-2+offsetx] === PLAYER){
+      else if (grid[y+player.y-2+offsety][x+player.x-3+offsetx] === PLAYER){
         image(goodjob, x * cellSize, y * cellSize, cellSize, cellSize);
       }
     }
   }
-}
+} //  ) *matches your unmatched parenthesis*
