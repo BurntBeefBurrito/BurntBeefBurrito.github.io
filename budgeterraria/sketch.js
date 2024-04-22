@@ -19,7 +19,7 @@ let gg;
 let goodjob;  
 let tile;
 let wall;
-let charactermodel;         //todo: improve clicking, make basic gen, grow trees, get better placeholders, physics, implement walls? also get some decent sleep
+let charactermodel;         //todo: make basic gen, grow trees, get better placeholders, physics, implement walls?
 let state = "menu";
 let boing;
 let player = {
@@ -32,7 +32,7 @@ function preload(){ //man I SURE WONDER WHAT THE PRELOAD FUNCTION DOES
   music = loadSound("audio/caketown.mp3");
   boing = loadSound("audio/boing.flac");
   tile = loadImage("images/floor.png");
-  wall = loadImage("images/wall.png");
+  wall = loadImage("images/wall.png");    //these are 256 by 256
 }
 
 function setup() {
@@ -41,12 +41,10 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 
   grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
-  
-  noStroke();
-
   grid[player.y][player.x] = PLAYER;
-  
+  noSmooth();
 }
+
 function draw() {
   createCanvas(windowWidth, windowHeight);
   if(windowHeight < windowWidth){
@@ -100,6 +98,23 @@ function keyPressed() { //causes various things to happen when keys are pressed
 function mousePressed() { //transforms tiles when clicked on, please improve
   let x = Math.floor(mouseX/cellSize);
   let y = Math.floor(mouseY/cellSize);
+
+  let offsetx = 0;
+  let offsety = 0;
+  if (player.x < 3){
+    offsetx = 3-player.x;  //gonna need to do something about the miracle numbers
+  }
+  if (player.y < 2){
+    offsety = 2-player.y;
+  }
+  if (player.y >= GRID_SIZE -2){
+    offsety = GRID_SIZE-player.y-3;
+  }
+  if (player.x >= GRID_SIZE -3){
+    offsetx = GRID_SIZE-player.x-4;
+  }
+  x += player.x - 3 + offsetx;
+  y += player.y - 2 + offsety;
 
   toggleCell(x, y);
   if(mode === 1){
