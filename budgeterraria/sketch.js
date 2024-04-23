@@ -1,14 +1,15 @@
 // 2d block game thing
 // Michael
-// partly stolen
+// barely stolen
+//source spaghetti has nothing on this
 
 let grid;
 let cellSize;
 let mode = 1;
-const GRID_SIZE = 12;
-const VISIBLE_GRID_SIZE = { //add a cure for miracle numbers
-  w: 7,
-  h: 5,
+const GRID_SIZE = 30; //needs to be greater than the visgrid height AND width
+const VISIBLE_GRID_SIZE = { //odd numbers strongly recommended
+  w: 11, //width
+  h: 7, //height
 };
 const PLAYER = 9;
 const OPEN_TILE = 0;
@@ -17,14 +18,13 @@ let music;
 let woah;
 let gg;
 let goodjob;  
-let tile;
-let wall;
+let tile, wall;
 let charactermodel;         //todo: make basic gen, grow trees, get better placeholders, physics, implement walls?
 let state = "menu";
 let boing;
 let player = {
   x: 2,
-  y: 2,
+  y: 9,
 };
 
 function preload(){ //man I SURE WONDER WHAT THE PRELOAD FUNCTION DOES
@@ -32,7 +32,7 @@ function preload(){ //man I SURE WONDER WHAT THE PRELOAD FUNCTION DOES
   music = loadSound("audio/caketown.mp3");
   boing = loadSound("audio/boing.flac");
   tile = loadImage("images/floor.png");
-  wall = loadImage("images/wall.png");    //these are 256 by 256
+  wall = loadImage("images/wall.png");    //these are 256 by 256 textures, scaled up from 16x16
 }
 
 function setup() {
@@ -43,6 +43,10 @@ function setup() {
   grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
   grid[player.y][player.x] = PLAYER;
   noSmooth();
+  VISIBLE_GRID_SIZE.wf = Math.floor(VISIBLE_GRID_SIZE.w/2); //width floor
+  VISIBLE_GRID_SIZE.wc = Math.ceil(VISIBLE_GRID_SIZE.w/2); //width ceiling
+  VISIBLE_GRID_SIZE.hf = Math.floor(VISIBLE_GRID_SIZE.h/2); //height floor
+  VISIBLE_GRID_SIZE.hc = Math.ceil(VISIBLE_GRID_SIZE.h/2); //height ceiling
 }
 
 function draw() {
@@ -51,7 +55,7 @@ function draw() {
     cellSize = height/VISIBLE_GRID_SIZE.h;
   }
   else{
-    cellSize = width/VISIBLE_GRID_SIZE.h;
+    cellSize = width/VISIBLE_GRID_SIZE.w;
   }
 
   if (state === "menu"){
@@ -101,20 +105,20 @@ function mousePressed() { //transforms tiles when clicked on, please improve
 
   let offsetx = 0;
   let offsety = 0;
-  if (player.x < 3){
-    offsetx = 3-player.x;  //gonna need to do something about the miracle numbers
+  if (player.x < VISIBLE_GRID_SIZE.wf){
+    offsetx = VISIBLE_GRID_SIZE.wf-player.x;  
   }
-  if (player.y < 2){
-    offsety = 2-player.y;
+  if (player.y < VISIBLE_GRID_SIZE.hf){
+    offsety = VISIBLE_GRID_SIZE.hf-player.y;
   }
-  if (player.y >= GRID_SIZE -2){
-    offsety = GRID_SIZE-player.y-3;
+  if (player.y >= GRID_SIZE -VISIBLE_GRID_SIZE.hf){
+    offsety = GRID_SIZE-player.y-VISIBLE_GRID_SIZE.hc;
   }
-  if (player.x >= GRID_SIZE -3){
-    offsetx = GRID_SIZE-player.x-4;
+  if (player.x >= GRID_SIZE -VISIBLE_GRID_SIZE.wf){
+    offsetx = GRID_SIZE-player.x-VISIBLE_GRID_SIZE.wc;
   }
-  x += player.x - 3 + offsetx;
-  y += player.y - 2 + offsety;
+  x += player.x - VISIBLE_GRID_SIZE.wf + offsetx;
+  y += player.y - VISIBLE_GRID_SIZE.hf + offsety;
 
   toggleCell(x, y);
   if(mode === 1){
@@ -139,16 +143,28 @@ function toggleCell(x, y) {
 }
 
 function generateRandomGrid(cols, rows) { //random world gen
-  let emptyArray = [];
-  for (let y = 0; y < rows; y++) {
+  let emptyArray = [];//generates the surface
+  for (let y = 0; y < rows/2; y++) {
     emptyArray.push([]);
     for (let x = 0; x < cols; x++) {
       //half the time, be a 1. Other half, be a 0.
-      if (random(100) < 50) {
+      if (random(100) < 97) {
         emptyArray[y].push(0);
       }
       else {
         emptyArray[y].push(1);
+      }
+    }
+  }
+  for (let y = 0; y < rows/2; y++) {//generates the underground
+    emptyArray.push([]);
+    for (let x = 0; x < cols; x++) {
+      //half the time, be a 1. Other half, be a 0.
+      if (random(100) < 20) {
+        emptyArray[y+rows/2].push(0);
+      }
+      else {
+        emptyArray[y+rows/2].push(1);
       }
     }
   }
@@ -190,26 +206,26 @@ function displayVisGrid(){ //paints pretty pictures
     for (let x = 0; x < VISIBLE_GRID_SIZE.w; x++){
       let offsetx = 0;
       let offsety = 0;
-      if (player.x < 3){
-        offsetx = 3-player.x;  //gonna need to do something about the miracle numbers
+      if (player.x < VISIBLE_GRID_SIZE.wf){
+        offsetx = VISIBLE_GRID_SIZE.wf-player.x;  //gonna need to do something about the miracle numbers
       }
-      if (player.y < 2){
-        offsety = 2-player.y;
+      if (player.y < VISIBLE_GRID_SIZE.hf){
+        offsety = VISIBLE_GRID_SIZE.hf-player.y;
       }
-      if (player.y >= GRID_SIZE -2){
-        offsety = GRID_SIZE-player.y-3;
+      if (player.y >= GRID_SIZE -VISIBLE_GRID_SIZE.hf){
+        offsety = GRID_SIZE-player.y-VISIBLE_GRID_SIZE.hc;
       }
-      if (player.x >= GRID_SIZE -3){
-        offsetx = GRID_SIZE-player.x-4;
+      if (player.x >= GRID_SIZE -VISIBLE_GRID_SIZE.wf){
+        offsetx = GRID_SIZE-player.x-VISIBLE_GRID_SIZE.wc;
       }
 
-      if (grid[y+player.y-2+offsety][x+player.x-3+offsetx] === IMPASSIBLE) {
+      if (grid[y+player.y-VISIBLE_GRID_SIZE.hf+offsety][x+player.x-VISIBLE_GRID_SIZE.wf+offsetx] === IMPASSIBLE) {
         image(wall, x * cellSize, y * cellSize, cellSize, cellSize);
       }
-      else if (grid[y+player.y-2+offsety][x+player.x-3+offsetx] === OPEN_TILE){
+      else if (grid[y+player.y-VISIBLE_GRID_SIZE.hf+offsety][x+player.x-VISIBLE_GRID_SIZE.wf+offsetx] === OPEN_TILE){
         image(tile, x * cellSize, y * cellSize, cellSize, cellSize);
       }
-      else if (grid[y+player.y-2+offsety][x+player.x-3+offsetx] === PLAYER){
+      else if (grid[y+player.y-VISIBLE_GRID_SIZE.hf+offsety][x+player.x-VISIBLE_GRID_SIZE.wf+offsetx] === PLAYER){
         image(goodjob, x * cellSize, y * cellSize, cellSize, cellSize);
       }
     }
