@@ -1,6 +1,5 @@
 // 2d block game thing
 // Michael
-// barely stolen
 //source spaghetti has nothing on this
 
 let grid;
@@ -64,10 +63,10 @@ function draw() {
 
   if (state === "menu"){
     background("black");
+    text("hit space to start the thing, use wasd, e, r, t and left click to do stuff", windowWidth/2 - 150, windowHeight/2);
   }
   else{
     background(0);
-    
     displayVisGrid();
   }
 
@@ -140,7 +139,7 @@ function toggleCell(x, y) {
     if (grid[y][x] === OPEN_TILE) {
       grid[y][x] = IMPASSIBLE;
     }
-    else if(grid[y][x] === IMPASSIBLE){
+    else if(grid[y][x] !== OPEN_TILE && grid[y][x] !== PLAYER){
       grid[y][x] = OPEN_TILE;
     }
   }
