@@ -6,25 +6,28 @@
 let grid;
 let cellSize;
 let mode = 1;
-const GRID_SIZE = 30; //needs to be greater than the visgrid height AND width
+const GRID_SIZE = 50; //needs to be greater than the visgrid height AND width
 const VISIBLE_GRID_SIZE = { //odd numbers strongly recommended
-  w: 11, //width
-  h: 7, //height
+  w: 17, //width
+  h: 9, //height
 };
 const PLAYER = 9;
 const OPEN_TILE = 0;
 const IMPASSIBLE = 1;
+const COPPER = 2;
 let music;
 let woah;
 let gg;
 let goodjob;  
 let tile, wall;
 let charactermodel;         //todo: make basic gen, grow trees, get better placeholders, physics, implement walls?
-let state = "menu";
+let state = "menu";         //program for the future I suppose
 let boing;
+let copper;
 let player = {
   x: 2,
-  y: 9,
+  y: GRID_SIZE/2-1,
+  ontile: OPEN_TILE,
 };
 
 function preload(){ //man I SURE WONDER WHAT THE PRELOAD FUNCTION DOES
@@ -32,7 +35,8 @@ function preload(){ //man I SURE WONDER WHAT THE PRELOAD FUNCTION DOES
   music = loadSound("audio/caketown.mp3");
   boing = loadSound("audio/boing.flac");
   tile = loadImage("images/floor.png");
-  wall = loadImage("images/wall.png");    //these are 256 by 256 textures, scaled up from 16x16
+  wall = loadImage("images/Untitled.png");    //these are 256 by 256 textures, scaled up from 16x16
+  copper = loadImage("images/copper.png");
 }
 
 function setup() {
@@ -160,8 +164,11 @@ function generateRandomGrid(cols, rows) { //random world gen
     emptyArray.push([]);
     for (let x = 0; x < cols; x++) {
       //half the time, be a 1. Other half, be a 0.
-      if (random(100) < 20) {
+      if (random(100) < 25) {
         emptyArray[y+rows/2].push(0);
+      }
+      else if(random(100) < 5){
+        emptyArray[y+rows/2].push(2);
       }
       else {
         emptyArray[y+rows/2].push(1);
@@ -186,7 +193,7 @@ function generateEmptyGrid(cols, rows) { //make an empty grid, handy for testing
 
 function movePlayer(x, y){ //moves the player
   if (x < GRID_SIZE && y < GRID_SIZE && x >=0 && y >= 0 && grid[y][x] !== IMPASSIBLE) { //this keeps it on the grid
-    let onTile; //remembers what tile the player is standing on
+    let ontile = grid[y][x]; //remembers what tile the player is standing on
     let oldX = player.x;
     let oldY = player.y;
 
@@ -194,7 +201,8 @@ function movePlayer(x, y){ //moves the player
     player.y = y;
 
     grid[player.y][player.x] = PLAYER;
-    grid[oldY][oldX] = OPEN_TILE;
+    grid[oldY][oldX] = player.ontile;
+    player.ontile = ontile;
   }
   else {
     boing.play();
@@ -227,6 +235,9 @@ function displayVisGrid(){ //paints pretty pictures
       }
       else if (grid[y+player.y-VISIBLE_GRID_SIZE.hf+offsety][x+player.x-VISIBLE_GRID_SIZE.wf+offsetx] === PLAYER){
         image(goodjob, x * cellSize, y * cellSize, cellSize, cellSize);
+      }
+      else if (grid[y+player.y-VISIBLE_GRID_SIZE.hf+offsety][x+player.x-VISIBLE_GRID_SIZE.wf+offsetx] === COPPER){
+        image(copper, x * cellSize, y * cellSize, cellSize, cellSize);
       }
     }
   }
