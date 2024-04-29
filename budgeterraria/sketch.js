@@ -4,7 +4,7 @@
 
 let grid;
 let cellSize;
-let mode = 1;
+let mode = -1;
 const GRID_SIZE = 50; //needs to be greater than the visgrid height AND width
 const VISIBLE_GRID_SIZE = { //odd numbers strongly recommended
   w: 17, //width
@@ -18,24 +18,25 @@ let music;
 let woah;
 let gg;
 let goodjob;  
-let tile, wall;
+let tile, wall, copper, wood, dirt;
 let charactermodel;         //todo: make basic gen, grow trees, get better placeholders, physics, implement walls?
 let state = "menu";         //program for the future I suppose
 let boing;
-let copper;
 let player = {
   x: 2,
-  y: GRID_SIZE/2-1,
+  y: 0,
   ontile: OPEN_TILE,
 };
 
 function preload(){ //man I SURE WONDER WHAT THE PRELOAD FUNCTION DOES
-  goodjob = loadImage("images/SlingshotGoodJob.jpg");
+  goodjob = loadImage("images/SlingshotGoodJob.jpg");// for the record this is a jpeg because its funny (to me), so the white square is intentional
   music = loadSound("audio/caketown.mp3");
   boing = loadSound("audio/boing.flac");
   tile = loadImage("images/floor.png");
-  wall = loadImage("images/Untitled.png");    //these are 256 by 256 textures, scaled up from 16x16
+  wall = loadImage("images/stone.png");    //these are 256 by 256 textures, scaled up from 16x16 to maintain pixel crispness
   copper = loadImage("images/copper.png");
+  dirt = loadImage("images/dirt.png");
+  wood = loadImage("images/wood.png");
 }
 
 function setup() {
@@ -66,7 +67,7 @@ function draw() {
     text("hit space to start the thing, use wasd, e, r, t and left click to do stuff", windowWidth/2 - 150, windowHeight/2);
   }
   else{
-    background(0);
+    background(135, 196, 235);
     displayVisGrid();
   }
 
@@ -147,15 +148,25 @@ function toggleCell(x, y) {
 
 function generateRandomGrid(cols, rows) { //random world gen
   let emptyArray = [];//generates the surface
-  for (let y = 0; y < rows/2; y++) {
+  for (let y = 0; y < rows/4; y++) {
     emptyArray.push([]);
     for (let x = 0; x < cols; x++) {
-      //half the time, be a 1. Other half, be a 0.
       if (random(100) < 97) {
         emptyArray[y].push(0);
       }
       else {
         emptyArray[y].push(1);
+      }
+    }
+  }
+  for (let y = 0; y < rows/2; y++) {
+    emptyArray.push([]);
+    for (let x = 0; x < cols; x++) {
+      if (random(100) < 3) {
+        emptyArray[y].push(2);
+      }
+      else {
+        emptyArray[y].push(2);
       }
     }
   }
@@ -229,9 +240,9 @@ function displayVisGrid(){ //paints pretty pictures
       if (grid[y+player.y-VISIBLE_GRID_SIZE.hf+offsety][x+player.x-VISIBLE_GRID_SIZE.wf+offsetx] === IMPASSIBLE) {
         image(wall, x * cellSize, y * cellSize, cellSize, cellSize);
       }
-      else if (grid[y+player.y-VISIBLE_GRID_SIZE.hf+offsety][x+player.x-VISIBLE_GRID_SIZE.wf+offsetx] === OPEN_TILE){
-        image(tile, x * cellSize, y * cellSize, cellSize, cellSize);
-      }
+      //else if (grid[y+player.y-VISIBLE_GRID_SIZE.hf+offsety][x+player.x-VISIBLE_GRID_SIZE.wf+offsetx] === OPEN_TILE){
+      //  image(tile, x * cellSize, y * cellSize, cellSize, cellSize);
+      //}
       else if (grid[y+player.y-VISIBLE_GRID_SIZE.hf+offsety][x+player.x-VISIBLE_GRID_SIZE.wf+offsetx] === PLAYER){
         image(goodjob, x * cellSize, y * cellSize, cellSize, cellSize);
       }
